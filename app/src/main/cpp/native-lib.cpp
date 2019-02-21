@@ -2,6 +2,16 @@
 #include <string>
 #include "FFDemux.h"
 #include "XLog.h"
+#include "IObserver.h"
+
+class TestObs: public IObserver
+{
+public:
+    void Update(XData d)
+    {
+       XLOGI("TestObs Update data size is %d", d.size);
+    }
+};
 
 extern "C" JNIEXPORT jstring JNICALL
 Java_frank_com_xplay_MainActivity_stringFromJNI(
@@ -11,7 +21,9 @@ Java_frank_com_xplay_MainActivity_stringFromJNI(
 
     XLOGI("------------------------------------------");
     //测试
+    TestObs *tobs = new TestObs();
     IDemux *de = new FFDemux();
+    de->AddObs(tobs);
     de->Open("/sdcard/fftest.mp4");
     de->Start();
     XSleep(3000);
