@@ -5,6 +5,9 @@
 #include "IObserver.h"
 #include "IDecode.h"
 #include "FFDecode.h"
+#include "XEGL.h"
+#include "XShader.h"
+#include <android/native_window_jni.h>
 
 class TestObs: public IObserver
 {
@@ -49,4 +52,14 @@ Java_frank_com_xplay_MainActivity_stringFromJNI(
 //    }
 
     return env->NewStringUTF(hello.c_str());
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_frank_com_xplay_XPlay_InitView(JNIEnv *env, jobject instance, jobject surface) {
+
+    ANativeWindow *win = ANativeWindow_fromSurface(env, surface);
+    XEGL::Get()->Init(win);
+    XShader shader;
+    shader.Init();
 }
