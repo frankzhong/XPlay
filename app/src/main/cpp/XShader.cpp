@@ -144,3 +144,7 @@ bool XShader::Init() {
 
     return false;
 }
+
+void XShader::Draw() {
+
+}

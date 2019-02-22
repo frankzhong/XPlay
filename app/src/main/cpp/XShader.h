@@ -9,6 +9,9 @@
 class XShader {
 public:
     virtual bool Init();
+    //获取材质并映射到内存
+    virtual void GetTexture(unsigned int index, int width, int height, unsigned char *buf);
+    virtual void Draw();
 
 protected:
     unsigned int vsh = 0;
