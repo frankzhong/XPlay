@@ -7,6 +7,8 @@
 #include "FFDecode.h"
 #include "XEGL.h"
 #include "XShader.h"
+#include "IVideoView.h"
+#include "GLVideoView.h"
 #include <android/native_window_jni.h>
 
 class TestObs: public IObserver
@@ -18,6 +20,7 @@ public:
     }
 };
 
+IVideoView *view = NULL;
 extern "C" JNIEXPORT jstring JNICALL
 Java_frank_com_xplay_MainActivity_stringFromJNI(
         JNIEnv* env,
@@ -28,17 +31,21 @@ Java_frank_com_xplay_MainActivity_stringFromJNI(
     //测试
     TestObs *tobs = new TestObs();
     IDemux *de = new FFDemux();
-    de->AddObs(tobs);
+    //de->AddObs(tobs);
+    de->Open("/sdcard/v1080.mp4");
 
-    de->Open("/sdcard/fftest.mp4");
     IDecode *vdecode = new FFDecode();
     vdecode->Open(de->GetVPara());
 
     IDecode *adecode = new FFDecode();
-    vdecode->Open(de->GetAPara());
+    adecode->Open(de->GetAPara());
 
     de->AddObs(vdecode);
     de->AddObs(adecode);
+
+    view = new GLVideoView();
+    vdecode->AddObs(view);
+
 
     de->Start();
     vdecode->Start();
@@ -59,7 +66,9 @@ JNIEXPORT void JNICALL
 Java_frank_com_xplay_XPlay_InitView(JNIEnv *env, jobject instance, jobject surface) {
 
     ANativeWindow *win = ANativeWindow_fromSurface(env, surface);
-    XEGL::Get()->Init(win);
-    XShader shader;
-    shader.Init();
+
+    view->SetRender(win);
+    //XEGL::Get()->Init(win);
+    //XShader shader;
+    //shader.Init();
 }
