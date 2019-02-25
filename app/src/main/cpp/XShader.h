@@ -17,6 +17,7 @@ protected:
     unsigned int vsh = 0;
     unsigned int fsh = 0;
     unsigned int program = 0;
+    unsigned int texts[100] = {0};
 
 };
 
