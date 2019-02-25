@@ -27,7 +27,7 @@ public:
     bool isAudio = false;
 
     //最大的队列缓冲
-    int maxList = 500;
+    int maxList = 100;
 
 protected:
     virtual void Main();

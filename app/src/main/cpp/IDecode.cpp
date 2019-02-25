@@ -48,7 +48,7 @@ void IDecode::Update(XData pkt) {
         packsMutex.lock();
 
         //阻塞
-        if(pkt.size < maxList)
+        if(packs.size() < maxList)
         {
             packs.push_back(pkt);
             packsMutex.unlock();
