@@ -27,14 +27,7 @@ IVideoView *view = NULL;
 extern "C" JNIEXPORT jint JNI_OnLoad(JavaVM *vm, void *res)
 {
     FFDecode::InitHard(vm);
-    return JNI_VERSION_1_4;
-}
 
-extern "C" JNIEXPORT jstring JNICALL
-Java_frank_com_xplay_MainActivity_stringFromJNI(
-        JNIEnv* env,
-        jobject /* this */) {
-    std::string hello = "Hello from C++";
 
     XLOGI("------------------------------------------");
     //测试
@@ -66,6 +59,18 @@ Java_frank_com_xplay_MainActivity_stringFromJNI(
     de->Start();
     vdecode->Start();
     adecode->Start();
+
+
+    return JNI_VERSION_1_4;
+}
+
+extern "C" JNIEXPORT jstring JNICALL
+Java_frank_com_xplay_MainActivity_stringFromJNI(
+        JNIEnv* env,
+        jobject /* this */) {
+    std::string hello = "Hello from C++";
+
+
     //XSleep(3000);
     //de->Stop();
 //    for(;;)
