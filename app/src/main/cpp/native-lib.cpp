@@ -9,6 +9,7 @@
 #include "XShader.h"
 #include "IVideoView.h"
 #include "GLVideoView.h"
+#include "FFResample.h"
 #include <android/native_window_jni.h>
 
 class TestObs: public IObserver
@@ -46,6 +47,9 @@ Java_frank_com_xplay_MainActivity_stringFromJNI(
     view = new GLVideoView();
     vdecode->AddObs(view);
 
+    IResample *resample = new FFResample();
+    resample->Open(de->GetAPara());
+    adecode->AddObs(resample);
 
     de->Start();
     vdecode->Start();
