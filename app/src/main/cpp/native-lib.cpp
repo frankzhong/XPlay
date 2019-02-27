@@ -25,36 +25,7 @@ extern "C" JNIEXPORT jint JNI_OnLoad(JavaVM *vm, void *res)
     XLOGI("------------------------------------------");
     //测试
 //    TestObs *tobs = new TestObs();
-    IDemux *de = new FFDemux();
-    //de->AddObs(tobs);
-//    de->Open("/sdcard/v1080.mp4");
 
-    IDecode *vdecode = new FFDecode();
-//    vdecode->Open(de->GetVPara(), true);
-
-    IDecode *adecode = new FFDecode();
-//    adecode->Open(de->GetAPara());
-
-    de->AddObs(vdecode);
-    de->AddObs(adecode);
-
-    view = new GLVideoView();
-    vdecode->AddObs(view);
-
-    IResample *resample = new FFResample();
-//    XParameter outPara = de->GetAPara();
-//    resample->Open(de->GetAPara(), outPara);
-    adecode->AddObs(resample);
-    IAudioPlay *audioPlay = new SLAudioPlay();
-//    audioPlay->StartPlay(outPara);
-    resample->AddObs(audioPlay);
-
-    IPlayer::Get()->demux = de;
-    IPlayer::Get()->adecode = adecode;
-    IPlayer::Get()->vdecode = vdecode;
-    IPlayer::Get()->videoView = view;
-    IPlayer::Get()->resample = resample;
-    IPlayer::Get()->audioPlay = audioPlay;
     IPlayer::Get()->Open("/sdcard/v1080.mp4");
     IPlayer::Get()->Start();
 
