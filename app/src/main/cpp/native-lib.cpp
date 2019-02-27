@@ -56,6 +56,7 @@ extern "C" JNIEXPORT jint JNI_OnLoad(JavaVM *vm, void *res)
     IPlayer::Get()->resample = resample;
     IPlayer::Get()->audioPlay = audioPlay;
     IPlayer::Get()->Open("/sdcard/v1080.mp4");
+    IPlayer::Get()->Start();
 
 //    de->Start();
 //    vdecode->Start();
@@ -70,7 +71,6 @@ Java_frank_com_xplay_MainActivity_stringFromJNI(
         JNIEnv* env,
         jobject /* this */) {
     std::string hello = "Hello from C++";
-
 
     //XSleep(3000);
     //de->Stop();
@@ -88,8 +88,9 @@ JNIEXPORT void JNICALL
 Java_frank_com_xplay_XPlay_InitView(JNIEnv *env, jobject instance, jobject surface) {
 
     ANativeWindow *win = ANativeWindow_fromSurface(env, surface);
+    IPlayer::Get()->InitView(win);
 
-    view->SetRender(win);
+//    view->SetRender(win);
     //XEGL::Get()->Init(win);
     //XShader shader;
     //shader.Init();

@@ -18,7 +18,7 @@ public:
     virtual XData GetData();
     virtual bool StartPlay(XParameter out) = 0;
     //最大缓冲
-    int maxFrame = 500;
+    int maxFrame = 100;
 
 protected:
     std::list <XData> frames;
