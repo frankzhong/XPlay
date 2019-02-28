@@ -9,6 +9,8 @@ extern "C"{
 #include "XLog.h"
 
 bool FFResample::Open(XParameter in, XParameter out) {
+    Close();
+    mux.lock();
     //音频重采样上下文初始化
     actx = swr_alloc();
     actx = swr_alloc_set_opts(actx, av_get_default_channel_layout(out.channels), AV_SAMPLE_FMT_S16,
@@ -16,6 +18,7 @@ bool FFResample::Open(XParameter in, XParameter out) {
                               (AVSampleFormat)in.para->format, in.para->sample_rate, 0, 0);
     int re = swr_init(actx);
     if (re != 0) {
+        mux.unlock();
         XLOGE("swr_init failed!");
         return false;
     } else {
@@ -23,7 +26,17 @@ bool FFResample::Open(XParameter in, XParameter out) {
     }
     outChannels = in.para->channels;
     outFormat = AV_SAMPLE_FMT_S16;
+    mux.unlock();
     return true;
+}
+
+void FFResample::Close() {
+    mux.lock();
+    if(actx)
+    {
+        swr_free(&actx);
+    }
+    mux.unlock();
 }
 
 XData FFResample::Resample(XData indata) {
@@ -31,8 +44,13 @@ XData FFResample::Resample(XData indata) {
 
     if(indata.size <= 0 || !indata.data)
         return XData();
+    mux.lock();
     if(!actx)
+    {
+        mux.unlock();
         return XData();
+    }
+
     AVFrame *frame = (AVFrame *)indata.data;
 
     //输出空间的分配
@@ -46,11 +64,15 @@ XData FFResample::Resample(XData indata) {
     int len = swr_convert(actx, outArr, frame->nb_samples, (const uint8_t **)frame->data, frame->nb_samples);
     if(len <= 0)
     {
+        mux.unlock();
         out.Drop();
         return XData();
     }
     out.pts = indata.pts;
     XLOGI("swr_convert success = %d", len);
+    mux.unlock();
     return out;
 //    return XData();
 }
+
+

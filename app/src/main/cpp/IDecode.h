@@ -14,6 +14,7 @@ class IDecode: public IObserver{
 public:
     //打开解码器
     virtual bool Open(XParameter par, bool isHard = false) = 0;
+    virtual void Close() = 0;
 
     //future 模型 发送数据到线程解码
     virtual bool SendPacket(XData pket) = 0;

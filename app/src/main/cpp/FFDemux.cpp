@@ -18,9 +18,12 @@ static double r2d(AVRational r)
 bool FFDemux::Open(const char *url)
 {
     XLOGI("Open file %s begin", url);
+    Close();
+    mux.lock();
     int re = avformat_open_input(&ic, url, 0, 0);
     if(re != 0)
     {
+        mux.unlock();
         char buf[1024] = {0};
         av_strerror(re, buf, sizeof(buf));
         XLOGE("FFDemux open %s failed!", url);
@@ -32,6 +35,7 @@ bool FFDemux::Open(const char *url)
     re = avformat_find_stream_info(ic, 0);
     if(re != 0)
     {
+        mux.unlock();
         char buf[1024] = {0};
         av_strerror(re, buf, sizeof(buf));
         XLOGE("avformat_find_stream_info %s failed!", url);
@@ -39,6 +43,7 @@ bool FFDemux::Open(const char *url)
     }
 
     this->totalMs = ic->duration/(AV_TIME_BASE/1000);
+    mux.unlock();
     GetVPara();
     GetAPara();
     XLOGI("total ms = %d", totalMs);
@@ -46,16 +51,31 @@ bool FFDemux::Open(const char *url)
     return true;
 }
 
+void FFDemux::Close() {
+    mux.lock();
+    if(ic)
+        avformat_close_input(&ic);
+    mux.unlock();
+}
+
+
 //读取一帧数据，数据由调用者清理
 XData FFDemux::Read()
 {
-    if(!ic) return XData();
+    mux.lock();
+    if(!ic)
+    {
+        mux.unlock();
+        return XData();
+    }
+
     XData d;
     AVPacket *pkt = av_packet_alloc();
     int re = av_read_frame(ic, pkt);
     if(re != 0)
     {
         av_packet_free(&pkt);
+        mux.unlock();
         return XData();
     }
     //XLOGI("pack size is %d pts is %lld", pkt->size, pkt->pts);
@@ -72,6 +92,7 @@ XData FFDemux::Read()
     else
     {
         av_packet_free(&pkt);
+        mux.unlock();
         return XData();
     }
 
@@ -80,6 +101,7 @@ XData FFDemux::Read()
     pkt->dts = pkt->dts * (1000 * r2d(ic->streams[pkt->stream_index]->time_base));
     d.pts = (int)pkt->pts;
     XLOGI("demux pts %d", d.pts);
+    mux.unlock();
 
     return d;
 }
@@ -104,8 +126,10 @@ FFDemux::FFDemux()
 
 XParameter FFDemux::GetVPara()
 {
+    mux.lock();
     if(!ic)
     {
+        mux.unlock();
         XLOGE("GetVPara failed! ic is null!");
         return XParameter();
     }
@@ -113,19 +137,23 @@ XParameter FFDemux::GetVPara()
     int re = av_find_best_stream(ic, AVMEDIA_TYPE_VIDEO, -1, -1, 0, 0);
     if(re < 0)
     {
+        mux.unlock();
         XLOGE("av_find_best_stream failed!");
         return XParameter();
     }
     videoStream = re;
     XParameter para;
     para.para = ic->streams[re]->codecpar;
+    mux.unlock();
     return para;
 
 }
 
 XParameter FFDemux::GetAPara() {
+    mux.lock();
     if(!ic)
     {
+        mux.unlock();
         XLOGE("GetVPara failed! ic is null!");
         return XParameter();
     }
@@ -133,6 +161,7 @@ XParameter FFDemux::GetAPara() {
     int re = av_find_best_stream(ic, AVMEDIA_TYPE_AUDIO, -1, -1, 0, 0);
     if(re < 0)
     {
+        mux.unlock();
         XLOGE("av_find_best_stream failed!");
         return XParameter();
     }
@@ -141,5 +170,7 @@ XParameter FFDemux::GetAPara() {
     para.para = ic->streams[re]->codecpar;
     para.channels = ic->streams[re]->codecpar->channels;
     para.sample_rate = ic->streams[re]->codecpar->sample_rate;
+    mux.unlock();
     return para;
 }
+
