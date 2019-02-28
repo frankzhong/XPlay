@@ -1,37 +1,25 @@
 #include <jni.h>
 #include <string>
-#include "FFDemux.h"
 #include "XLog.h"
-#include "IObserver.h"
-#include "IDecode.h"
-#include "FFDecode.h"
-#include "XEGL.h"
-#include "XShader.h"
-#include "IVideoView.h"
-#include "GLVideoView.h"
-#include "FFResample.h"
-#include "IAudioPlay.h"
-#include "SLAudioPlay.h"
 #include "IPlayer.h"
 #include <android/native_window_jni.h>
+#include "FFPlayBuilder.h"
 
-
-IVideoView *view = NULL;
+static IPlayer *player = NULL;
 extern "C" JNIEXPORT jint JNI_OnLoad(JavaVM *vm, void *res)
 {
-    FFDecode::InitHard(vm);
+    //FFDecode::InitHard(vm);
+
+    FFPlayBuilder::InitHard(vm);
 
 
     XLOGI("------------------------------------------");
-    //测试
-//    TestObs *tobs = new TestObs();
 
-    IPlayer::Get()->Open("/sdcard/v1080.mp4");
-    IPlayer::Get()->Start();
+    player = FFPlayBuilder::Get()->BuilderPlayer();
 
-//    de->Start();
-//    vdecode->Start();
-//    adecode->Start();
+
+    player->Open("/sdcard/v1080.mp4");
+    player->Start();
 
 
     return JNI_VERSION_1_4;
@@ -59,7 +47,8 @@ JNIEXPORT void JNICALL
 Java_frank_com_xplay_XPlay_InitView(JNIEnv *env, jobject instance, jobject surface) {
 
     ANativeWindow *win = ANativeWindow_fromSurface(env, surface);
-    IPlayer::Get()->InitView(win);
+    if(player)
+        player->InitView(win);
 
 //    view->SetRender(win);
     //XEGL::Get()->Init(win);

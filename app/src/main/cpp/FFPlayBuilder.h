@@ -7,8 +7,16 @@
 
 #include "IPlayBuilder.h"
 
-class FFPlayBuilder {
+class FFPlayBuilder: public IPlayBuilder {
+public:
+    static void InitHard(void *vm);
+    static FFPlayBuilder *Get()
+    {
+        static FFPlayBuilder ff;
+        return &ff;
+    }
 protected:
+    FFPlayBuilder(){};
     virtual IDemux *CreateDemux();
     virtual IDecode *CreateDecode();
     virtual IResample *CreateResample();
