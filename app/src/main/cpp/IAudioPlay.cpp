@@ -31,14 +31,17 @@ XData IAudioPlay::GetData() {
         framesNutex.lock();
         if(!frames.empty())
         {
+            //有数据返回
             d = frames.front();
             frames.pop_front();
             framesNutex.unlock();
+            pts = d.pts;
             return d;
         }
         framesNutex.unlock();
         XSleep(1);
     }
 
+    //未获取数据
     return d;
 }

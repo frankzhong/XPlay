@@ -29,6 +29,9 @@ public:
     //最大的队列缓冲
     int maxList = 100;
 
+    //同步时间，再次打开文件要清理
+    int synPts = 100;
+    int pts = 0;
 protected:
     virtual void Main();
     //读取缓冲

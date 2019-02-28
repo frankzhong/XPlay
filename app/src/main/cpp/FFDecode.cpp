@@ -98,6 +98,7 @@ XData FFDecode::RecvFrame() {
 //    if(!isAudio)
 //        XLOGI("data format is %d", frame->format);
     memcpy(d.datas, frame->data, sizeof(d.datas));
+    d.pts = frame->pts;
     return d;
 }
 
