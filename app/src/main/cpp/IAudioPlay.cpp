@@ -45,3 +45,13 @@ XData IAudioPlay::GetData() {
     //未获取数据
     return d;
 }
+
+void IAudioPlay::Clear() {
+    framesNutex.lock();
+    while (!frames.empty())
+    {
+        frames.front().Drop();
+        frames.pop_front();
+    }
+    framesNutex.unlock();
+}

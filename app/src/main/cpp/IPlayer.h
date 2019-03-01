@@ -21,6 +21,7 @@ public:
     static IPlayer *Get(unsigned char index=0);
     virtual bool Open(const char *path);
     virtual bool Start();
+    virtual void Close();
     virtual void InitView(void *win);
     //是否视频硬解码
     bool isHardDecode = true;

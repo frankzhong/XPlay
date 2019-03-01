@@ -11,6 +11,9 @@ extern "C" JNIEXPORT jint JNI_OnLoad(JavaVM *vm, void *res)
     IPlayerProxy::Get()->Init(vm);
     IPlayerProxy::Get()->Open("/sdcard/v1080.mp4");
     IPlayerProxy::Get()->Start();
+//    IPlayerProxy::Get()->Open("/sdcard/fftest.mp4");
+//    IPlayerProxy::Get()->Start();
+
     return JNI_VERSION_1_4;
 }
 

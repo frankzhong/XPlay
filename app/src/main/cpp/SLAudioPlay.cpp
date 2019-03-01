@@ -144,6 +144,7 @@ bool SLAudioPlay::StartPlay(XParameter out) {
 }
 
 void SLAudioPlay::Close() {
+    IAudioPlay::Clear();
     mux.lock();
     //停止播放
     if(iplayer && (*iplayer))
