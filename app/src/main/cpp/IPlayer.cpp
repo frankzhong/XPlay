@@ -88,10 +88,7 @@ void IPlayer::Close() {
 
 bool IPlayer::Start() {
     mux.lock();
-    if(audioPlay)
-        audioPlay->StartPlay(outPara);
-    if(adecode)
-        adecode->Start();
+
     if(vdecode)
         vdecode->Start();
     if(!demux || !demux->Start())
@@ -100,6 +97,10 @@ bool IPlayer::Start() {
         XLOGE("demux->Start failed!");
         return false;
     }
+    if(adecode)
+        adecode->Start();
+    if(audioPlay)
+        audioPlay->StartPlay(outPara);
 
     XThread::Start();
     mux.unlock();
@@ -135,6 +136,25 @@ void IPlayer::Main() {
         XSleep(2);
     }
 
+}
+
+double IPlayer::PlayPos() {
+    double pos = 0.0;
+    mux.lock();
+
+    int total = 0;
+    if(demux)
+        total = demux->totalMs;
+    if(total > 0)
+    {
+        if(vdecode)
+        {
+            pos = (double)vdecode->pts/(double)total;
+        }
+    }
+
+    mux.unlock();
+    return pos;
 }
 
 

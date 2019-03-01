@@ -9,15 +9,18 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements Runnable {
 
     // Used to load the 'native-lib' library on application startup.
     static {
         System.loadLibrary("native-lib");
     }
     private Button bt;
+    private SeekBar seek;
+    private Thread th;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +44,27 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        seek = findViewById(R.id.aplayseek);
+        seek.setMax(1000);
+        //启动播放进度
+        th = new Thread(this);
+        th.start();
     }
 
+    //播放进度显示
+    @Override
+    public void run() {
+        for (;;)
+        {
+            seek.setProgress((int) PlayPos()*1000);
+            try {
+                Thread.sleep(40);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public native double PlayPos();
 }

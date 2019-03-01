@@ -37,3 +37,11 @@ Java_frank_com_xplay_OpenUrl_Open(JNIEnv *env, jobject instance, jstring url_) {
 
     env->ReleaseStringUTFChars(url_, url);
 }
+
+extern "C"
+JNIEXPORT jdouble JNICALL
+Java_frank_com_xplay_MainActivity_PlayPos(JNIEnv *env, jobject instance) {
+
+    return IPlayerProxy::Get()->PlayPos();
+
+}

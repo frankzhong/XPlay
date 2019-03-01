@@ -21,6 +21,7 @@ public:
     virtual bool Start();
     virtual void Close();
     virtual void InitView(void *win);
+    virtual double playPos();
 
 protected:
     IPlayerProxy(){};

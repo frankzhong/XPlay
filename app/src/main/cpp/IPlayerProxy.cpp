@@ -18,7 +18,11 @@ bool IPlayerProxy::Open(const char *path) {
     bool re = false;
     mux.lock();
     if(player)
+    {
+        player->isHardDecode = isHardDecode;
         re = player->Open(path);
+    }
+
     mux.unlock();
     return re;
 }
@@ -44,5 +48,16 @@ void IPlayerProxy::Close() {
     if(player)
         player->Close();
     mux.unlock();
+}
+
+double IPlayerProxy::playPos() {
+    double pos = 0.0;
+    mux.lock();
+    if(player)
+    {
+        pos = player->PlayPos();
+    }
+    mux.unlock();
+    return pos;
 }
 

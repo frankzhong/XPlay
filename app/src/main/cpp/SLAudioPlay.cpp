@@ -172,6 +172,13 @@ void SLAudioPlay::Close() {
     {
         (*engineSL)->Destroy(engineSL);
     }
+    engineSL = NULL;
+    eng = NULL;
+    mix = NULL;
+    player = NULL;
+    iplayer = NULL;
+    pcmQue = NULL;
+
     mux.unlock();
 }
 
@@ -191,7 +198,8 @@ void SLAudioPlay::PlayCall(void *bufq) {
         return;
     memcpy(buf, d.data, d.size);
     mux.lock();
-    (*bf)->Enqueue(bf, buf, d.size);
+    if(pcmQue && (*pcmQue))
+        (*pcmQue)->Enqueue(pcmQue, buf, d.size);
     mux.unlock();
     d.Drop();
 
