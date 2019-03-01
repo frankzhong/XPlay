@@ -46,7 +46,7 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:inputType="textPersonName"
-                android:text="rtmp://live.hkstv.hk.lxdns.com/live/hks" />
+                android:text="rtmp://mobliestream.c3tv.com:554/live/goodtv.sdp" />
 
             <Button
                 android:id="@+id/playrtmp"
