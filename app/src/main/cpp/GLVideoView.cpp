@@ -18,3 +18,13 @@ void GLVideoView::Render(XData data) {
     }
     txt->Draw(data.datas, data.width, data.height);
 }
+
+void GLVideoView::Close() {
+    mux.lock();
+    if(txt)
+    {
+        txt->Drop();
+        txt = 0;
+    }
+    mux.unlock();
+}
