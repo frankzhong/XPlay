@@ -126,10 +126,13 @@ static GLuint InitShader(const char *code, GLint type) {
 }
 
 bool XShader::Init(XShaderType type) {
+    Close();
+    mux.lock();
     //顶点和片元shader初始化
     //顶点shader初始化
     vsh = InitShader(vertexShader, GL_VERTEX_SHADER);
     if (vsh == 0) {
+        mux.unlock();
         XLOGE("InitShader GL_VERTEX_SHADER failed!");
         return false;
     }
@@ -147,12 +150,14 @@ bool XShader::Init(XShaderType type) {
             fsh = InitShader(fragNV21, GL_FRAGMENT_SHADER);
             break;
         default:
+            mux.unlock();
             XLOGE("XSHADER format is error");
             return false;
     }
 
 
     if (fsh == 0) {
+        mux.unlock();
         XLOGE("InitShader GL_FRAGMENT_SHADER failed!");
         return false;
     }
@@ -163,6 +168,7 @@ bool XShader::Init(XShaderType type) {
     //创建渲染程序
     program = glCreateProgram();
     if (program == 0) {
+        mux.unlock();
         XLOGE("glCreateProgram failed!");
         return false;
     }
@@ -175,6 +181,7 @@ bool XShader::Init(XShaderType type) {
     GLint status = 0;
     glGetProgramiv(program, GL_LINK_STATUS, &status);
     if (status != GL_TRUE) {
+        mux.unlock();
         XLOGE("glLinkProgram failed!");
         return false;
     }
@@ -224,22 +231,48 @@ bool XShader::Init(XShaderType type) {
 
 
     XLOGI("初始化Shader成功！");
-
+    mux.unlock();
     return true;
+}
+
+void XShader::Close() {
+    //释放shader
+    mux.lock();
+    if(program)
+        glDeleteProgram(program);
+    if(fsh)
+        glDeleteShader(fsh);
+    if(vsh)
+        glDeleteShader(vsh);
+    //释放材质
+    for (int i = 0; i < sizeof(texts)/ sizeof(unsigned int); ++i) {
+        if(texts[i])
+        {
+            glDeleteTextures(1, &texts[i]);
+        }
+        texts[i] = 0;
+    }
+    mux.unlock();
 }
 
 
 void XShader::Draw() {
+    mux.lock();
     if (!program)
+    {
+        mux.unlock();
         return;
+    }
     //三维绘制
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    mux.unlock();
 }
 
 void XShader::GetTexture(unsigned int index, int width, int height, unsigned char *buf, bool isa) {
     unsigned int format = GL_LUMINANCE;
     if(isa)
         format = GL_LUMINANCE_ALPHA;
+    mux.lock();
     if (texts[index] == 0) {
         //材质初始化
         glGenTextures(1, &texts[index]);
@@ -266,6 +299,7 @@ void XShader::GetTexture(unsigned int index, int width, int height, unsigned cha
     glBindTexture(GL_TEXTURE_2D, texts[index]);
     //替换纹理内容
     glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, format, GL_UNSIGNED_BYTE, buf);
-
-
+    mux.unlock();
 }
+
+
