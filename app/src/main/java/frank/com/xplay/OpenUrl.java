@@ -1,5 +1,6 @@
 package frank.com.xplay;
 
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +17,7 @@ import android.widget.EditText;
 public class OpenUrl extends AppCompatActivity {
     private Button btfile;
     private Button btrtmp;
+    private Button btconwin;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +42,16 @@ public class OpenUrl extends AppCompatActivity {
                 Open(t.getText().toString());
                 //关闭当前窗口
                 finish();
+            }
+        });
+        btconwin = findViewById(R.id.playrconwin);
+        btconwin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EditText t = findViewById(R.id.conwinurl);
+                Intent i = new Intent(OpenUrl.this, ConwinPlayer.class);
+                i.putExtra("url", t.getText().toString());
+                startActivity(i);
             }
         });
 

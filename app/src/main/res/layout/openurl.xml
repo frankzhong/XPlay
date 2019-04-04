@@ -21,7 +21,8 @@
 
             <EditText
                 android:id="@+id/fileurl"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:inputType="textPersonName"
@@ -38,21 +39,44 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:orientation="horizontal">
 
             <EditText
                 android:id="@+id/rtmpurl"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:inputType="textPersonName"
-                android:text="rtmp://mobliestream.c3tv.com:554/live/goodtv.sdp" />
+                android:text="rtsp://184.72.239.149/vod/mp4://BigBuckBunny_175k.mov" />
 
             <Button
                 android:id="@+id/playrtmp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="香港卫视直播" />
+                android:text="电视直播" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/conwinurl"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:text="http://192.168.3.216:7000/stream/6gvRgjJHjjvH2LMM3Z7vYkUW"/>
+
+            <Button
+                android:id="@+id/playrconwin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="丛文视频" />
         </LinearLayout>
     </LinearLayout>
 </FrameLayout>
